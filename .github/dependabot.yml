@@ -13,4 +13,4 @@ updates:
       all-deps:
         applies-to: version-updates
         patterns:
-          = "*"
+          - "*"
