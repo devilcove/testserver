@@ -6,6 +6,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"net/netip"
 	"time"
 
 	"github.com/golang-jwt/jwt/v4"
@@ -13,7 +14,11 @@ import (
 
 func GetIP(w http.ResponseWriter, r *http.Request) {
 	log.Println("GetIP", r.RemoteAddr)
-	w.Write([]byte(r.RemoteAddr))
+	addrPort, err := netip.ParseAddrPort(r.RemoteAddr)
+	if err != nil {
+		log.Println("parse remote addr", err)
+	}
+	w.Write(addrPort.Addr.AsSlice())
 }
 
 func Login(w http.ResponseWriter, r *http.Request) {
