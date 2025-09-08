@@ -18,7 +18,7 @@ type CustomClaims struct {
 }
 
 func SetupRouter() *mux.Router {
-	router := mux.NewRouter()
+	router := mux.NewRouter(mux.Logger)
 	// basic routes
 	router.Get("/ip", GetIP)
 	router.Post("/login", Login)
