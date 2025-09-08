@@ -2,32 +2,37 @@
 package main
 
 import (
+	"encoding/json"
+	"io"
 	"log"
 	"net/http"
 	"time"
 
-	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v4"
 )
 
-func GetIP(c *gin.Context) {
-	IP := c.ClientIP()
-	c.String(http.StatusOK, IP)
+func GetIP(w http.ResponseWriter, r *http.Request) {
+	w.Write([]byte(r.RemoteAddr))
 }
 
-func Login(c *gin.Context) {
+func Login(w http.ResponseWriter, r *http.Request) {
 	log.Println("login")
 	var err error
 	request := struct {
 		User string
 		Pass string
 	}{}
-	if err := c.BindJSON(&request); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"request": c.Request.Body, "error": err.Error()})
+	body, err := io.ReadAll(r.Body)
+	if err != nil {
+		fail(w, http.StatusBadRequest, "invalid request "+err.Error())
+		return
+	}
+	if err := json.Unmarshal(body, &request); err != nil {
+		fail(w, http.StatusBadRequest, "invalid request "+err.Error())
 		return
 	}
 	if request.User != "demo" || request.Pass != "pass" {
-		c.JSON(http.StatusBadRequest, gin.H{"request": request, "error": "invalid username or password"})
+		fail(w, http.StatusBadRequest, "invalid username or password")
 		return
 	}
 	expires := time.Now().Add(time.Minute * 3)
@@ -41,13 +46,19 @@ func Login(c *gin.Context) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	JWT, err := token.SignedString(SigningKey)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"message": "error creating JWT", "error": err.Error()})
+		fail(w, http.StatusInternalServerError, "unable to create JWT "+err.Error())
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"JWT": JWT})
+	response := struct {
+		JWT string
+	}{
+		JWT: JWT,
+	}
+	payload, _ := json.Marshal(response)
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(payload)
 }
 
-func Hello(c *gin.Context) {
-	IP := c.ClientIP()
-	c.String(http.StatusOK, IP)
+func Hello(w http.ResponseWriter, r *http.Request) {
+	GetIP(w, r)
 }

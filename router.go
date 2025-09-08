@@ -2,11 +2,12 @@
 package main
 
 import (
+	"encoding/json"
 	"log"
 	"net/http"
 	"time"
 
-	"github.com/gin-gonic/gin"
+	"github.com/devilcove/mux"
 	"github.com/golang-jwt/jwt/v4"
 )
 
@@ -16,48 +17,57 @@ type CustomClaims struct {
 	jwt.RegisteredClaims
 }
 
-func SetupRouter() *gin.Engine {
-	router := gin.Default()
-	//basic routes
-	router.GET("/ip", GetIP)
-	router.POST("/login", Login)
-	//authenticated routes
+func SetupRouter() *mux.Router {
+	router := mux.NewRouter()
+	// basic routes
+	router.Get("/ip", GetIP)
+	router.Post("/login", Login)
+	// authenticated routes
 	restricted := router.Group("/api", Auth)
 	{
-		restricted.GET("/hello", Hello)
+		restricted.Get("/hello", Hello)
 	}
 	return router
 }
 
-func Auth(c *gin.Context) {
-	if len(c.Request.Header["Authorization"]) == 0 {
-		fail(c, "no auth header")
-		return
-	}
-	id, status := getFromJWT(c.Request.Header["Authorization"][0])
-	log.Println(id, status, time.Now())
-	if status == 1 {
-		fail(c, "token expired")
-		return
-	}
-	if status == 2 {
-		fail(c, "invalid token")
-	}
-	if id != "demo" {
-		fail(c, "no such user")
-		return
-	}
-
-	c.Next()
+func Auth(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if len(r.Header["Authorization"]) == 0 {
+			fail(w, http.StatusUnauthorized, "no auth header")
+			return
+		}
+		id, status := getFromJWT(r.Header["Authorization"][0])
+		log.Println(id, status, time.Now())
+		if status == 1 {
+			fail(w, http.StatusUnauthorized, "token expired")
+			return
+		}
+		if status == 2 {
+			fail(w, http.StatusUnauthorized, "invalid token")
+			return
+		}
+		if id != "demo" {
+			fail(w, http.StatusUnauthorized, "no such user")
+			return
+		}
+		next.ServeHTTP(w, r)
+	})
 }
 
-func fail(c *gin.Context, message string) {
-	c.JSON(http.StatusUnauthorized, gin.H{"message": message})
-	c.Abort()
+func fail(w http.ResponseWriter, status int, message string) {
+	response := struct {
+		Message string
+	}{
+		Message: message,
+	}
+	payload, _ := json.Marshal(response)
+	w.WriteHeader(status)
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(payload)
 }
 
 func getFromJWT(auth string) (string, int) {
-	//parts := strings.Split(auth, " ")
+	// parts := strings.Split(auth, " ")
 	log.Println(auth)
 	//if len(parts) < 2 {
 	//return "", nil
