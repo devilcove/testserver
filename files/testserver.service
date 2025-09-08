@@ -8,7 +8,7 @@ Requires=network-online.target
 Type=simple
 User=mkasun
 Group=mkasun
-ExecStart=/usr/bin/testserver
+ExecStart=/home/mkasun/testserver/testserver
 TimeoutStopSec=5s
 Restart=on-failure
 
