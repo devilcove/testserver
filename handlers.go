@@ -6,19 +6,20 @@ import (
 	"io"
 	"log"
 	"net/http"
-	"net/netip"
+	"strings"
 	"time"
 
 	"github.com/golang-jwt/jwt/v4"
 )
 
 func GetIP(w http.ResponseWriter, r *http.Request) {
-	log.Println("GetIP", r.RemoteAddr)
-	addrPort, err := netip.ParseAddrPort(r.RemoteAddr)
-	if err != nil {
-		log.Println("parse remote addr", err)
+	forwarded := r.Header.Get("X-Forwarded-For")
+	remote := strings.Split(r.RemoteAddr, ":")
+	if forwarded != "" {
+		remote[0] = forwarded
 	}
-	w.Write(addrPort.Addr.AsSlice())
+	log.Println("GetIP", remote[0])
+	w.Write([]byte(remote[0]))
 }
 
 func Login(w http.ResponseWriter, r *http.Request) {
