@@ -12,6 +12,7 @@ import (
 )
 
 func GetIP(w http.ResponseWriter, r *http.Request) {
+	log.Println("GetIP", r.RemoteAddr)
 	w.Write([]byte(r.RemoteAddr))
 }
 
@@ -57,6 +58,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	payload, _ := json.Marshal(response)
 	w.Header().Set("Content-Type", "application/json")
 	w.Write(payload)
+	log.Println(string(payload))
 }
 
 func Hello(w http.ResponseWriter, r *http.Request) {

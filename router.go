@@ -55,6 +55,7 @@ func Auth(next http.Handler) http.Handler {
 }
 
 func fail(w http.ResponseWriter, status int, message string) {
+	log.Output(1, message)
 	response := struct {
 		Message string
 	}{
