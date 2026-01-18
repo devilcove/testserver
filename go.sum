@@ -1,4 +1,6 @@
 github.com/devilcove/mux v0.2.0 h1:U9bKQs0HhGJqIFUmH84nPt5pz67QJtmVtwT2f3RKgsk=
 github.com/devilcove/mux v0.2.0/go.mod h1:Q4ysJcjpLwW7rLNTOYSlYVst5OmwFh1uZxJSCPQ34U4=
+github.com/devilcove/mux v0.2.2 h1:d5Uf8DIaIw6mgqclVM5+mUQHkxr7xtCtnOMlZ+4OqH0=
+github.com/devilcove/mux v0.2.2/go.mod h1:Q4ysJcjpLwW7rLNTOYSlYVst5OmwFh1uZxJSCPQ34U4=
 github.com/golang-jwt/jwt/v4 v4.5.2 h1:YtQM7lnr8iZ+j5q71MGKkNw9Mn7AjHM68uc9g5fXeUI=
 github.com/golang-jwt/jwt/v4 v4.5.2/go.mod h1:m21LjoU+eqJr34lmDMbreY2eSTRJ1cv77w39/MY0Ch0=

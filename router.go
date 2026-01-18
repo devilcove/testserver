@@ -1,4 +1,3 @@
-// copywrite 2022 Matthew R Kasun mkasun@nusak.ca
 package main
 
 import (
@@ -24,9 +23,9 @@ func SetupRouter() *mux.Router {
 	router.Post("/login", Login)
 	// authenticated routes
 	restricted := router.Group("/api", Auth)
-	{
-		restricted.Get("/hello", Hello)
-	}
+	//{
+	restricted.Get("/hello", Hello)
+	//}
 	return router
 }
 
@@ -68,12 +67,8 @@ func fail(w http.ResponseWriter, status int, message string) {
 }
 
 func getFromJWT(auth string) (string, int) {
-	// parts := strings.Split(auth, " ")
 	log.Println(auth)
-	//if len(parts) < 2 {
-	//return "", nil
-	//}
-	token, err := jwt.ParseWithClaims(auth, &CustomClaims{}, func(token *jwt.Token) (interface{}, error) {
+	token, err := jwt.ParseWithClaims(auth, &CustomClaims{}, func(*jwt.Token) (any, error) {
 		return SigningKey, nil
 	})
 	if err != nil {

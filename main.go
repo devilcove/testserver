@@ -1,4 +1,4 @@
-// copywrite 2022 Matthew R Kasun mkasun@nusak.ca
+// copyright 2022 Matthew R Kasun mkasun@nusak.ca
 package main
 
 func main() {

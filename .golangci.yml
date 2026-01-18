@@ -1,0 +1,55 @@
+version: "2"
+linters:
+  default: all
+  disable:
+    - depguard
+    - errchkjson
+    - exhaustruct
+    - gochecknoglobals
+    - mnd
+    - musttag
+    - nlreturn
+    - noinlineerr
+    - wsl
+    - wsl_v5
+  settings:
+    errcheck:
+      exclude-functions:
+        - crypto/rand.Read
+        - io.WriteString
+        - (net/http.ResponseWriter).Write
+        - log.Output
+    ireturn:
+      allow:
+        - error
+        - stdlib
+        - generic
+    gosec:
+      excludes:
+        - G104
+    varnamelen:
+      max-distance: 15
+      ignore-decls:
+        - c Cookie
+        - r *http.Request
+        - w http.ResponseWriter
+  exclusions:
+    warn-unused: true
+    generated: lax
+    presets:
+      #- comments
+      - common-false-positives
+      - legacy
+      - std-error-handling
+formatters:
+  enable:
+    - gofumpt
+    - golines
+  settings: 
+    gofumpt:
+      extra-rules: true
+    #golines:
+     #max-len: 120
+  exclusions:
+    warn-unused: true
+    generated: lax

@@ -1,4 +1,3 @@
-// copywrite 2022 Matthew R Kasun mkasun@nusak.ca
 package main
 
 import (
@@ -19,7 +18,7 @@ func GetIP(w http.ResponseWriter, r *http.Request) {
 		remote[0] = forwarded
 	}
 	log.Println("GetIP", remote[0])
-	w.Write([]byte(remote[0]))
+	io.WriteString(w, remote[0])
 }
 
 func Login(w http.ResponseWriter, r *http.Request) {
